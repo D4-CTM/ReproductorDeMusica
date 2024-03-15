@@ -24,6 +24,8 @@ public class Panel extends JPanel implements Runnable{
     private final FileManager FM;
     //Variables usadas en los hilos
     private boolean PonerMusica;
+    //Variables usadas en continuar musica
+    private int lastFrame = 0;
     //Variables usadas en el swing
     private final int W = 800;
     private final int H = 600;
@@ -66,6 +68,7 @@ public class Panel extends JPanel implements Runnable{
         Back.setOpaque(false);
         Back.setIcon(ScaledImage(new File("Icons\\NextSong.png").getAbsolutePath(), Back.getWidth(), Back.getHeight()));
         Back.addActionListener((ActionEvt)->{
+            lastFrame = 0;
             try {
                 Rolas.setSelectedIndex(Rolas.getSelectedIndex() - 1);
             } catch (Exception Ex){
@@ -85,6 +88,7 @@ public class Panel extends JPanel implements Runnable{
         Pause.addActionListener((ActionEvt)->{
             PonerMusica = !PonerMusica;
             if (!PonerMusica){
+                lastFrame = Vinilo.getPosition();
                 Vinilo.close();
             }
         });
@@ -99,6 +103,7 @@ public class Panel extends JPanel implements Runnable{
         Next.setOpaque(false);
         Next.setIcon(ScaledImage(new File("Icons\\NextSong.png").getAbsolutePath(), Next.getWidth(), Next.getHeight()));
         Next.addActionListener((ActionEvt)->{
+            lastFrame = 0;
             try {
                 Rolas.setSelectedIndex(Rolas.getSelectedIndex() + 1);
             } catch (Exception Ex){
@@ -123,6 +128,7 @@ public class Panel extends JPanel implements Runnable{
         Rolas.setBounds(25, 50, 250, 25);
         Rolas.setModel(new javax.swing.DefaultComboBoxModel(FM.PlayList.getSongList()));
         Rolas.addActionListener((ActionEvent) -> {
+            lastFrame = 0;
             ChangeSongImage();
             PonerMusica = false;
             if (Vinilo != null){
@@ -160,7 +166,10 @@ public class Panel extends JPanel implements Runnable{
                 FileInputStream FileI = new FileInputStream(Cancion.getLocation());
                 BufferedInputStream Input = new BufferedInputStream(FileI);
                 Vinilo = new Player(Input);
-                Vinilo.play();
+                if (lastFrame != 0){
+                    Vinilo.play(lastFrame);
+                    lastFrame = 0;
+                } else Vinilo.play();
             }
         } catch (Exception Ex){
             Ex.printStackTrace();
