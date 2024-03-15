@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javazoom.jl.player.Player;
 
@@ -87,7 +88,7 @@ public class Panel extends JPanel implements Runnable{
         Pause.setIcon(ScaledImage(new File("Icons\\PP.png").getAbsolutePath(), Pause.getWidth(), Pause.getHeight()));
         Pause.addActionListener((ActionEvt)->{
             PonerMusica = !PonerMusica;
-            if (!PonerMusica){
+            if (!PonerMusica && Vinilo != null){
                 lastFrame = Vinilo.getPosition();
                 Vinilo.close();
             }
@@ -167,7 +168,9 @@ public class Panel extends JPanel implements Runnable{
                 BufferedInputStream Input = new BufferedInputStream(FileI);
                 Vinilo = new Player(Input);
                 if (lastFrame != 0){
-                    Vinilo.play(lastFrame);
+                    if (JOptionPane.showConfirmDialog(this, "Desea continuar escuchando?", "Continuar escuchando", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == JOptionPane.YES_OPTION){
+                        Vinilo.play(lastFrame);
+                    } else Vinilo.play();
                     lastFrame = 0;
                 } else Vinilo.play();
             }
@@ -180,6 +183,7 @@ public class Panel extends JPanel implements Runnable{
     public void run(){
         while (true){
             PlaySong();
+            repaint();
         }
     }
     
