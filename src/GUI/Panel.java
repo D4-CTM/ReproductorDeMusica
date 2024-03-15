@@ -63,8 +63,14 @@ public class Panel extends JPanel implements Runnable{
         JButton Back = new JButton();
         
         Back.setBounds(25, 425, 200, 100);
+        Back.setOpaque(false);
+        Back.setIcon(ScaledImage(new File("Icons\\NextSong.png").getAbsolutePath(), Back.getWidth(), Back.getHeight()));
         Back.addActionListener((ActionEvt)->{
-            System.out.println("nice");
+            try {
+                Rolas.setSelectedIndex(Rolas.getSelectedIndex() - 1);
+            } catch (Exception Ex){
+                Rolas.setSelectedIndex(FM.PlayList.getSize() - 1);
+            }
         });
         
         return Back;
@@ -74,10 +80,13 @@ public class Panel extends JPanel implements Runnable{
         JButton Pause = new JButton();
         
         Pause.setBounds(X, 425, 200, 100);
+        Pause.setOpaque(false);
         Pause.setIcon(ScaledImage(new File("Icons\\PP.png").getAbsolutePath(), Pause.getWidth(), Pause.getHeight()));
         Pause.addActionListener((ActionEvt)->{
             PonerMusica = !PonerMusica;
-            System.out.println(PonerMusica);
+            if (!PonerMusica){
+                Vinilo.close();
+            }
         });
         
         return Pause;
@@ -87,8 +96,14 @@ public class Panel extends JPanel implements Runnable{
         JButton Next = new JButton();
         
         Next.setBounds(X, 425, 200, 100);
+        Next.setOpaque(false);
+        Next.setIcon(ScaledImage(new File("Icons\\NextSong.png").getAbsolutePath(), Next.getWidth(), Next.getHeight()));
         Next.addActionListener((ActionEvt)->{
-            System.out.println("nice");
+            try {
+                Rolas.setSelectedIndex(Rolas.getSelectedIndex() + 1);
+            } catch (Exception Ex){
+                Rolas.setSelectedIndex(0);
+            }
         });
         
         return Next;
@@ -110,7 +125,9 @@ public class Panel extends JPanel implements Runnable{
         Rolas.addActionListener((ActionEvent) -> {
             ChangeSongImage();
             PonerMusica = false;
-            Vinilo.close();
+            if (Vinilo != null){
+                Vinilo.close();
+            }
         });
     }
     
@@ -144,9 +161,7 @@ public class Panel extends JPanel implements Runnable{
                 BufferedInputStream Input = new BufferedInputStream(FileI);
                 Vinilo = new Player(Input);
                 Vinilo.play();
-            } else if (Vinilo != null){
-                Vinilo.close();
-           }
+            }
         } catch (Exception Ex){
             Ex.printStackTrace();
         }
@@ -156,7 +171,6 @@ public class Panel extends JPanel implements Runnable{
     public void run(){
         while (true){
             PlaySong();
-            System.out.println("e");
         }
     }
     

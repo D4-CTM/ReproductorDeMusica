@@ -11,6 +11,10 @@ public class SongManager {
         Size = 0;
     }
     
+    public int getSize(){
+        return Size;
+    }
+    
     public boolean isEmpty(){
         return Inicio == null;
     }
